@@ -4,6 +4,7 @@ use core::num::NonZeroU8;
 
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::pubsub::{PubSubBehavior, PubSubChannel, Subscriber};
+use ffi::LL_TX_POWEER_0_DBM;
 
 use self::ffi::{tmos_event_hdr_t, tmos_msg_deallocate, tmos_msg_receive, BLE_PAControlInit, SYS_EVENT_MSG};
 use crate::ble::ffi::{blePaControlConfig_t, tmos_start_task, BLE_RegInit};
@@ -144,7 +145,7 @@ unsafe extern "C" fn hal_tmos_task(task_id: u8, events: u16) -> u16 {
         }
         return events ^ SYS_EVENT_MSG;
     } else if events & HAL_REG_INIT_EVENT != 0 {
-        BLE_RegInit();
+        // BLE_RegInit();
 
         tmos_start_task(task_id, HAL_REG_INIT_EVENT, HAL_TMOS_TASK_INTERVAL);
         return events ^ HAL_REG_INIT_EVENT;
@@ -187,7 +188,7 @@ pub fn init(
 
     // No SNV (SNVAddr, SNVBlock, SNVNum, readFlashCB, writeFlashCB)
 
-    cfg.SelRTCClock = 0; // use LSE: ( 0 外部(32768Hz)，默认:1：内部(32000Hz)，2：内部(32768Hz)
+    cfg.SelRTCClock = 1; // use LSE: ( 0 外部(32768Hz)，默认:1：内部(32000Hz)，2：内部(32768Hz)
 
     cfg.ConnectNumber = (PERIPHERAL_MAX_CONNECTION & 3) | (CENTRAL_MAX_CONNECTION << 2);
 
@@ -203,7 +204,7 @@ pub fn init(
     unsafe {
         BLE_LibInit(&cfg)?;
 
-        TMOS_TimerInit(core::ptr::null_mut())?;
+        // TMOS_TimerInit(core::ptr::null_mut())?;
 
         // regeister HAL tmos task
         let hal_task_id = TMOS_ProcessEventRegister(Some(hal_tmos_task));
