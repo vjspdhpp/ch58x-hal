@@ -17,7 +17,7 @@ pub mod gap;
 pub mod gatt;
 pub mod gatt_uuid;
 pub mod gattservapp;
-pub mod linkdb;
+pub mod linkdb;``
 
 const HEAP_SIZE: usize = 1024 * 6;
 
@@ -172,7 +172,7 @@ pub fn init(
     const BLE_TX_NUM_EVENT: u8 = 1;
     const BLE_BUFF_NUM: u8 = 5;
     const BLE_BUFF_MAX_LEN: u16 = 27;
-    const BLE_TX_POWER: u8 = LL_TX_POWEER_6_DBM;
+    const BLE_TX_POWER: u8 = LL_TX_POWEER_0_DBM;
     const PERIPHERAL_MAX_CONNECTION: u8 = 1;
     const CENTRAL_MAX_CONNECTION: u8 = 3;
 
@@ -188,7 +188,7 @@ pub fn init(
 
     // No SNV (SNVAddr, SNVBlock, SNVNum, readFlashCB, writeFlashCB)
 
-    cfg.SelRTCClock = 1; // use LSE: ( 0 外部(32768Hz)，默认:1：内部(32000Hz)，2：内部(32768Hz)
+    cfg.SelRTCClock = 2; // use LSE: ( 0 外部(32768Hz)，默认:1：内部(32000Hz)，2：内部(32768Hz)
 
     cfg.ConnectNumber = (PERIPHERAL_MAX_CONNECTION & 3) | (CENTRAL_MAX_CONNECTION << 2);
 
@@ -204,7 +204,7 @@ pub fn init(
     unsafe {
         BLE_LibInit(&cfg)?;
 
-        // TMOS_TimerInit(core::ptr::null_mut())?;
+        TMOS_TimerInit(core::ptr::null_mut())?;
 
         // regeister HAL tmos task
         let hal_task_id = TMOS_ProcessEventRegister(Some(hal_tmos_task));
